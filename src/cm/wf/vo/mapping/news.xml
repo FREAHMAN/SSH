@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cm.wf.vo.mapping.NewsNS">
+<!-- 启用缓存 -->
+<cache readOnly="true"/>
+<!-- 配置VO属性与数据表字段映射 -->
+<resultMap type="cm.wf.vo.news" id="NewsResultMap"> 
+	<id property="nid" column="nid"/>
+	<result property="title" column="title"/>
+	<result property="pubdate" column="pub_date"/>
+</resultMap>
+
+	<select id="findById" parameterType="int" resultMap="NewsResultMap"> 
+		select * from news where nid=#{nid}
+	</select>
+	<select id="findCount" resultType="int"> 
+		select count(1) from news 
+	</select>
+	<select id="findAll" resultMap="NewsResultMap"> 
+		select * from news 
+	</select>
+	<select id="findAllSplit" parameterType="java.util.Map" resultMap="NewsResultMap"> 
+		select * from news 
+		where ${column} like #{keyWord} limit #{start},#{lineSize}
+	</select>
+<!-- 配置了keyProperty 会获取到自动增长的ID 会浪费性能 不用的时候可以取消配置 -->
+  <insert id="doCreate" parameterType="cm.wf.vo.news" keyProperty="nid" useGeneratedKeys="true">
+		<!-- insert into member(mid,name,age,birthday,salary)
+		values(#{mid},#{name},#{age},#{birthday},#{salary}); -->
+		insert into news(title,pub_date) values(#{title},#{pubdate});
+	</insert>
+	
+	<update id="doUpdate" parameterType="cm.wf.vo.news">
+		update news set title=#{title},pub_date=#{pubdate} where nid=#{nid};
+	</update>
+	
+	<delete id="doRemove" parameterType="int">
+		delete from news where nid=#{nid}
+	</delete>
+	<delete id="doRemoveByTitle" parameterType="String">
+		delete from news where title=#{title}
+	</delete>
+	<!-- ************************************************************** -->
+	<select id="findAllByTitle" parameterType="cm.wf.vo.news" resultMap="NewsResultMap">
+		select * from news 
+		<if test="title!=null">
+			where title=#{title}
+		</if> 
+	</select>
+	
+	<select id="findAllSplit2" parameterType="java.util.Map" resultMap="NewsResultMap"> 
+		select * from news 
+		<if test="column!=null">
+		where ${column} like #{keyWord} 
+		</if>
+		limit #{start},#{lineSize}
+	</select>
+	
+	<select id="findAll2" parameterType="java.util.Map" resultMap="NewsResultMap">
+		select * from news 
+			<where><!-- where 控制妙啊 -->
+			<choose>
+				<when test="column =='nid' ">
+				${column}=#{nid}
+				</when>
+				<when test="column =='title' ">
+				${column}=#{title}
+				</when>
+				<!-- <otherwise>
+					1=1
+				</otherwise> -->
+			</choose>
+			</where> 
+	</select>
+	<select id="findAllForeach" resultMap="NewsResultMap" parameterType="Integer">
+		select * from news
+		<where>
+		 nid in 
+		 <foreach collection="array" open="(" close=")" separator="," item="ele"> 
+		 #{ele}
+		 </foreach>
+		</where>
+	</select>
+	
+	<select id="doRemoveBeach" resultMap="NewsResultMap" parameterType="Integer">
+		delete from news
+		<where>
+		 nid in 
+		 <foreach collection="array" open="(" close=")" separator="," item="ele"> 
+		 #{ele} 
+		 </foreach>
+		</where>
+	</select>
+	
+	<update id="doUpdateDyn" parameterType="cm.wf.vo.news" >
+		Update news 
+		<set>
+			<if test="title!=null">
+				title=#{title},
+			</if>
+			<if test="pubdate!=null">
+				pub_date=#{pubdate},
+			</if>
+		</set>
+		<where>
+			<if test="nid!=null">
+				nid=#{nid}
+			</if>
+		</where>
+	</update>
+</mapper>
+

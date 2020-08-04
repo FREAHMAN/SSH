@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cm.wf.vo.mapping.MembersNS">
+
+  <resultMap type="Members" id="MembersResultMap">
+  	<id property="mid" column="mid"/>
+  	<result property="name" column="name"/>
+  	<result property="age" column="age"/>
+  	<discriminator javaType="String" column="flag">
+  		<case value="学生" resultType="Student">
+  			<result property="school" column="school"/>
+  			<result property="score" column="score"/>
+  		</case>
+  		<case value="工人" resultType="Work">
+  			<result property="company" column="company"/>
+  			<result property="salary" column="salary"/>
+  		</case>
+  	</discriminator>
+  </resultMap>
+  
+  <insert id="doCreateStudent" parameterType="Student">
+  	insert into members (mid,name,age,flag,school,score) 
+  	values(#{mid},#{name},#{age},'学生',#{school},#{score});
+  </insert>
+  <insert id="doCreateWork" parameterType="Work">
+  	insert into members (mid,name,age,flag,company,salary) 
+  	values(#{mid},#{name},#{age},'工人',#{company},#{salary});
+  </insert>
+  
+  <select id="findByStudentId" parameterType="String" resultMap="MembersResultMap">
+  	select mid,name,age,flag,school,score from members
+  	<where>
+  		mid=#{pid}
+  		and flag='学生'
+  	</where>
+  </select>
+  
+  <select id="findByWorkId" parameterType="String" resultMap="MembersResultMap">
+  	select mid,name,age,flag,company,salary from members
+  	<where>
+  		mid=#{mid}
+  		and flag='工人'
+  	</where>
+  </select>
+  
+</mapper>
+
