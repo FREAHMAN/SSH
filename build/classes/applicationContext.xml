@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
+<!-- 启用annotation 支持包中扫描 -->
+<context:annotation-config/>
+<context:component-scan base-package="cn.wf"/>
+
+<bean id="msg" class="cn.wf.service.impl.MessageImpl"/>
+
+<bean id="dept" class="cn.wf.vo.Dept">
+<property name="deptno" value="001" ></property>
+<property name="dname" value="清洁部" ></property>
+<property name="loc" value="北京" ></property>
+</bean>
+
+<bean id="emp" class="cn.wf.vo.Emp">
+<!-- 设置属性 -->
+<property name="empno" value="001" ></property>
+<property name="ename" value="浮生" ></property>
+<property name="dept" ref="dept" ></property>
+</bean>
+
+</beans>
